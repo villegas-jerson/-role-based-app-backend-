@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Full-Stack App (Student Build)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="not-authenticated">
+
+<!-- ── NAVBAR ── -->
+<nav class="top-bar">
+  <div class="brand" onclick="navigateTo('#/')">Full-Stack App <span>(Jerson Villegas)</span></div>
+  <div class="nav-right">
+    <!-- Logged-out buttons -->
+    <button class="nav-btn outline role-logged-out" id="navLoginBtn">Login</button>
+    <button class="nav-btn solid  role-logged-out" id="navRegisterBtn">Register</button>
+
+    <!-- Logged-in user dropdown -->
+    <div class="user-menu role-logged-in" id="userMenu">
+      <div class="user-pill" id="userPill">
+        <div class="user-avatar" id="navAvatar">?</div>
+        <span id="navName">User</span> ▾
+      </div>
+      <div class="dropdown-panel" id="dropPanel">
+        <button class="dd-item" onclick="navigateTo('#/profile')">👤 Profile</button>
+        <button class="dd-item" onclick="navigateTo('#/requests')">📋 My Requests</button>
+        <button class="dd-item role-admin" onclick="navigateTo('#/employees')">👥 Employees</button>
+        <button class="dd-item role-admin" onclick="navigateTo('#/accounts')">🔑 Accounts</button>
+        <button class="dd-item role-admin" onclick="navigateTo('#/departments')">🏢 Departments</button>
+        <div class="dd-sep"></div>
+        <button class="dd-item danger" onclick="doLogout()">🚪 Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── PAGES ── -->
+<main>
+
+  <!-- HOME -->
+  <section class="page" id="page-home">
+    <div class="hero">
+      <h1>A <em>fullstack</em> prototype,<br/>built in pure frontend.</h1>
+      <p>Simulates email registration, JWT-style auth, role-based access, full CRUD for employees, departments &amp; accounts, and request management — all persisted in <code>localStorage</code>.</p>
+      <div class="badge-list">
+        <span class="badge-pill">Email Verification</span>
+        <span class="badge-pill">JWT Simulation</span>
+        <span class="badge-pill">Role-Based UI</span>
+        <span class="badge-pill">CRUD Operations</span>
+        <span class="badge-pill">Data Persistence</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGISTER -->
+  <section class="page" id="page-register">
+    <div class="form-section">
+      <div class="card-box">
+        <div class="card-title">Create account</div>
+        <div class="field" id="f-reg-fn">
+          <label>First Name</label>
+          <input type="text" id="reg-fn" placeholder="Juan" />
+          <div class="err">Required</div>
+        </div>
+        <div class="field" id="f-reg-ln">
+          <label>Last Name</label>
+          <input type="text" id="reg-ln" placeholder="dela Cruz" />
+          <div class="err">Required</div>
+        </div>
+        <div class="field" id="f-reg-em">
+          <label>Email</label>
+          <input type="email" id="reg-em" placeholder="juan@email.com" />
+          <div class="err" id="err-reg-em">Required</div>
+        </div>
+        <div class="field" id="f-reg-pw">
+          <label>Password <span style="color:var(--ink-3);font-size:.75rem">(min 6 chars)</span></label>
+          <input type="password" id="reg-pw" placeholder="••••••••" />
+          <div class="err" id="err-reg-pw">Min 6 characters</div>
+        </div>
+        <button class="btn-primary" id="regSubmitBtn">Create Account</button>
+        <div class="small-link">Already have an account? <a onclick="navigateTo('#/login')">Sign in</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VERIFY EMAIL -->
+  <section class="page" id="page-verify-email">
+    <div class="verify-box">
+      <div class="card-box">
+        <div class="verify-icon">📬</div>
+        <div class="card-title" style="text-align:center">Check your inbox</div>
+        <p style="color:var(--ink-2);font-size:.9rem;line-height:1.7;margin-bottom:.75rem">
+          A verification link has been sent to:
+        </p>
+        <div class="verify-email-lbl" id="verifyEmailLbl">—</div>
+        <p style="color:var(--ink-3);font-size:.82rem;margin-bottom:1.5rem">
+          (This is a simulation — click the button below to verify instantly.)
+        </p>
+        <button class="btn-verify" id="verifyBtn">✅ Simulate Email Verification</button>
+        <div class="divider"></div>
+        <div class="small-link">Back to <a onclick="navigateTo('#/login')">Login</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOGIN -->
+  <section class="page" id="page-login">
+    <div class="form-section">
+      <div class="card-box">
+        <div class="card-title">Welcome back</div>
+        <div class="field" id="f-log-em">
+          <label>Email</label>
+          <input type="email" id="log-em" placeholder="admin@example.com" />
+          <div class="err">Required</div>
+        </div>
+        <div class="field" id="f-log-pw">
+          <label>Password</label>
+          <input type="password" id="log-pw" placeholder="••••••••" />
+          <div class="err">Required</div>
+        </div>
+        <button class="btn-primary" id="loginSubmitBtn">Sign In</button>
+        <div class="small-link">No account? <a onclick="navigateTo('#/register')">Register</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROFILE -->
+  <section class="page" id="page-profile">
+    <div class="profile-section">
+      <div class="profile-header">
+        <div class="profile-avatar" id="profAvatar">?</div>
+        <div>
+          <div class="profile-name" id="profName">—</div>
+          <div class="role-badge" id="profRoleBadge">—</div>
+          <button class="btn-edit-profile" onclick="openEditProfileModal()" style="margin-top:.6rem">✏️ Edit Profile</button>
+        </div>
+      </div>
+      <div class="info-grid" id="profInfoGrid">
+        <!-- filled dynamically by script.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- EMPLOYEES (admin) -->
+  <section class="page" id="page-employees">
+    <div class="admin-section">
+      <div class="section-header">
+        <div class="section-title">Employees</div>
+        <button class="btn-add" onclick="openEmployeeModal()">+ Add Employee</button>
+      </div>
+      <div id="employees-table-wrap"></div>
+    </div>
+  </section>
+
+  <!-- ACCOUNTS (admin) -->
+  <section class="page" id="page-accounts">
+    <div class="admin-section">
+      <div class="section-header">
+        <div class="section-title">Accounts</div>
+        <button class="btn-add" onclick="openAccountModal()">+ Add Account</button>
+      </div>
+      <div id="accounts-table-wrap"></div>
+    </div>
+  </section>
+
+  <!-- DEPARTMENTS (admin) -->
+  <section class="page" id="page-departments">
+    <div class="admin-section">
+      <div class="section-header">
+        <div class="section-title">Departments</div>
+        <button class="btn-add" onclick="openDeptModal()">+ Add Department</button>
+      </div>
+      <div id="departments-table-wrap"></div>
+    </div>
+  </section>
+
+  <!-- REQUESTS -->
+  <section class="page" id="page-requests">
+    <div class="requests-section">
+      <div class="section-header">
+        <div class="section-title">My Requests</div>
+        <button class="btn-add" onclick="openRequestModal()">+ New Request</button>
+      </div>
+      <div id="requests-table-wrap"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── MODALS ── -->
+
+<!-- Employee Modal -->
+<div class="modal-backdrop" id="modal-employee">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="emp-modal-title">Add Employee</div>
+      <button class="modal-close" onclick="closeModal('modal-employee')">×</button>
+    </div>
+    <div class="field"><label>Employee ID</label><input type="text" id="emp-id" placeholder="EMP-001" /></div>
+    <div class="field" id="f-emp-email">
+      <label>User Email</label>
+      <input type="email" id="emp-email" placeholder="user@example.com" />
+      <div class="err" id="err-emp-email">Must match an existing account</div>
+    </div>
+    <div class="field"><label>Position</label><input type="text" id="emp-pos" placeholder="Software Engineer" /></div>
+    <div class="field">
+      <label>Department</label>
+      <select id="emp-dept"></select>
+    </div>
+    <div class="field"><label>Hire Date</label><input type="date" id="emp-hire" /></div>
+    <input type="hidden" id="emp-edit-id" />
+    <button class="btn-primary" onclick="saveEmployee()">Save Employee</button>
+  </div>
+</div>
+
+<!-- Account Modal -->
+<div class="modal-backdrop" id="modal-account">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="acc-modal-title">Add Account</div>
+      <button class="modal-close" onclick="closeModal('modal-account')">×</button>
+    </div>
+    <div class="field"><label>First Name</label><input type="text" id="acc-fn" /></div>
+    <div class="field"><label>Last Name</label> <input type="text" id="acc-ln" /></div>
+    <div class="field"><label>Email</label>     <input type="email" id="acc-em" /></div>
+    <div class="field" id="f-acc-pw">
+      <label>Password</label>
+      <input type="password" id="acc-pw" />
+      <div class="err">Min 6 characters</div>
+    </div>
+    <div class="field">
+      <label>Role</label>
+      <select id="acc-role">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="field" style="display:flex;align-items:center;gap:.6rem">
+      <input type="checkbox" id="acc-verified" style="width:auto;margin:0" />
+      <label style="margin:0;text-transform:none;font-size:.88rem;font-weight:500">Mark as Verified</label>
+    </div>
+    <input type="hidden" id="acc-edit-id" />
+    <button class="btn-primary" onclick="saveAccount()">Save Account</button>
+  </div>
+</div>
+
+<!-- Department Modal -->
+<div class="modal-backdrop" id="modal-dept">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="dept-modal-title">Add Department</div>
+      <button class="modal-close" onclick="closeModal('modal-dept')">×</button>
+    </div>
+    <div class="field"><label>Name</label><input type="text" id="dept-name" placeholder="Engineering" /></div>
+    <div class="field"><label>Description</label><textarea id="dept-desc" rows="3" placeholder="Brief description..."></textarea></div>
+    <input type="hidden" id="dept-edit-id" />
+    <button class="btn-primary" onclick="saveDept()">Save Department</button>
+  </div>
+</div>
+
+<!-- Request Modal -->
+<div class="modal-backdrop" id="modal-request">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">New Request</div>
+      <button class="modal-close" onclick="closeModal('modal-request')">×</button>
+    </div>
+    <div class="field">
+      <label>Request Type</label>
+      <select id="req-type">
+        <option>Equipment</option>
+        <option>Leave</option>
+        <option>Resources</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Items <span style="color:var(--ink-3);font-size:.75rem">(name + qty)</span></label>
+      <div id="req-items-container"></div>
+      <button class="btn-add-item" onclick="addRequestItemRow()">+ Add Item</button>
+    </div>
+    <button class="btn-primary" onclick="submitRequest()" style="margin-top:.5rem">Submit Request</button>
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal-backdrop" id="modal-edit-profile">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Edit Profile</div>
+      <button class="modal-close" onclick="closeModal('modal-edit-profile')">×</button>
+    </div>
+    <div class="field"><label>First Name</label><input type="text" id="edit-prof-fn" /></div>
+    <div class="field"><label>Last Name</label> <input type="text" id="edit-prof-ln" /></div>
+    <div class="field" id="f-edit-prof-pw">
+      <label>New Password <span style="color:var(--ink-3);font-size:.75rem">(leave blank to keep current)</span></label>
+      <input type="password" id="edit-prof-pw" placeholder="••••••••" />
+      <div class="err">Min 6 characters</div>
+    </div>
+    <button class="btn-primary" onclick="saveProfileEdit()">Save Changes</button>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="script.js"></script>
+</body>
+</html>
